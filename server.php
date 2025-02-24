@@ -193,7 +193,7 @@ function importCSVFiles()
             "category" => [
                 "path" => [
                     [
-                        "lv" => $productInfo['Subcategory']
+                        "lv" => $productInfo['Item category']
                     ]
                 ]
             ],
