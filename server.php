@@ -194,9 +194,6 @@ function importCSVFiles()
                 "path" => [
                     [
                         "lv" => $productInfo['Item category']
-                    ],
-                    [
-                        "lv" => $productInfo['Subcategory']
                     ]
                 ]
             ],
