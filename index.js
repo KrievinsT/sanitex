@@ -67,7 +67,7 @@ async function downloadLatestFiles(sftp) {
   // Download the latest files
   await sftp.get(`${remoteDir}/${latestFiles.productInfo.name}`, 'uploads/ProductInfo.csv');
   await sftp.get(`${remoteDir}/${latestFiles.products.name}`, 'duploads/Products.csv');
-  await sftp.get(`${remoteDir}/${latestFiles.stock.name}`, 'uplaods/Stock.csv');
+  await sftp.get(`${remoteDir}/${latestFiles.stock.name}`, 'uploads/Stock.csv');
 
   console.log('Latest files downloaded successfully');
 }
