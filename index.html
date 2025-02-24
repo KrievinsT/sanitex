@@ -17,22 +17,5 @@
     <div id="message"></div>
     
     <script src="script.js"></script>
-    <script>
-
-        const form = document.querySelector('form');
-        const message = document.getElementById('message');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const response = await fetch('download_files.php', {
-                method: 'POST',
-            });
-
-            const result = await response.text();
-            message.textContent = result;
-        });
-        
-    </script>
 </body>
 </html>
