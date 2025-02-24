@@ -9,12 +9,30 @@
 <body>
     <h2>Product Import Tool</h2>
     
-    <button onclick="main()">Download Files STEP.1</button>
+    <form action="download_files.php" method="POST">
+        <button type="submit">Download CSV Files</button>
+    </form>
     <button onclick="importProducts()">Import Products from CSV</button>
-    <!-- <button onclick="insertSingleProduct()">Insert Single Product</button> -->
     
+    <div id="message"></div>
     
     <script src="script.js"></script>
-    <script src="getDataCsv.js"></script>
+    <script>
+
+        const form = document.querySelector('form');
+        const message = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const response = await fetch('download_files.php', {
+                method: 'POST',
+            });
+
+            const result = await response.text();
+            message.textContent = result;
+        });
+        
+    </script>
 </body>
 </html>

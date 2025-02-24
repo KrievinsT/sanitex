@@ -85,7 +85,7 @@ function insertSingleProduct()
         "visible" => "FALSE",
         "featured" => "FALSE",
         "vendor" => "TestVendor",
-        "pictures" => [] // Bildes tiks pievienotas vēlāk
+        "pictures" => [] 
     ];
 
     $productHandle = $product['handle'];
@@ -95,7 +95,7 @@ function insertSingleProduct()
         if ($updateResult['status'] == 'success') {
             return ["status" => "success", "message" => "Product with handle '" . $productHandle . "' successfully updated.", "response" => $updateResult['response']];
         } else {
-            return $updateResult; // Return error response from updateProduct
+            return $updateResult; 
         }
     } else {
         $imageUrl = "https://epromo.imgix.net/image/209fcebf-c363-480f-a3be-897ba971323e.jpg";
@@ -131,7 +131,7 @@ function insertSingleProduct()
             return ["status" => "error", "message" => "Nevarēja augšupielādēt bildi uz Mozello", "response" => $uploadResponse];
         }
 
-        // 5. Pārbaudīt, vai produkts tika veiksmīgi izveidots
+        
         $responseData = json_decode($response, true);
         if (isset($responseData['id'])) {
             return ["status" => "success", "message" => "Produkts veiksmīgi izveidots", "response" => $responseData];
@@ -153,7 +153,7 @@ function importCSVFiles()
     $csvFiles = ["ProductInfo.csv", "Products.csv", "Stock.csv"];
     $formattedData = [];
 
-    // Parse CSV files
+    
     foreach ($csvFiles as $file) {
         $localFile = $localFolder . $file;
         if (!file_exists($localFile)) {
