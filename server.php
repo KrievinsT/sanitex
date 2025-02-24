@@ -209,6 +209,23 @@ function importCSVFiles()
             "pictures" => [] // Initially empty
         ];
 
+
+        foreach ($formattedData['Products.csv'] as $productPrice) {
+            if ($productPrice['INF_PREK'] == $productInfo['INF_PREK']) {
+                $product['price'] = (float)$productPrice['Kaina'] + ($productPrice['Kaina'] * 0.3);
+                $product['sale_price'] = (float)$productPrice['LMKaina'] + ($productPrice['Kaina'] * 0.3);
+                break;
+            }
+        }
+
+        
+        foreach ($formattedData['Stock.csv'] as $productStock) {
+            if ($productStock['INF_PREK'] == $productInfo['INF_PREK']) {
+                $product['stock'] = (int)$productStock['PC1'];
+                break;
+            }
+        }
+
         $productHandle = $product['handle'];
         if ($existingProductData = checkProductExists($productHandle)) {
             echo "Product with handle '" . $productHandle . "' already exists. Updating product from CSV.\n";
