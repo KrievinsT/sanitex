@@ -1,6 +1,7 @@
 const SftpClient = require('ssh2-sftp-client');
 const csv = require('csv-parser');
 const fs = require('fs');
+const path = require('path');
 const { parse } = require('json2csv');
 require('dotenv').config();
 
@@ -17,7 +18,31 @@ const config = {
 const SFTP_TIMEOUT = 20000;
 const HANDLE_FILE = 'data/handles.json';
 
+const uploadsFolder = path.join(__dirname, 'uploads');
+
+fs.readdir(uploadsFolder, (err, files) => {
+    if (err) {
+        console.error('Error reading the uploads directory:', err);
+        return;
+    }
+
+    files.forEach(file => {
+        const filePath = path.join(uploadsFolder, file);
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(`Error deleting file ${file}:`, err);
+            } else {
+                console.log(`Deleted file: ${file}`);
+            }
+        });
+    });
+});
+
+
 async function downloadLatestFiles(sftp) {
+
+  
+
   const remoteDir = '/'; 
   const filePatterns = {
     productInfo: /MKANDERSONS_ProductInfo_\d{4}-\d{2}-\d{2}\.csv/,
