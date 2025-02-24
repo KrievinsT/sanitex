@@ -182,8 +182,8 @@ function importCSVFiles()
     foreach ($formattedData['ProductInfo.csv'] as $productInfo) {
         if (!isset($productInfo['Item category']))
             continue;
-        $allowedCategories = ['Kafijas, kakao, kapučīno, tējas'];
-        if (!in_array($productInfo['Item category'], $allowedCategories)) {
+        $allowedCategories = ['Kafijas pupiņas'];
+        if (!in_array($productInfo['Subcategory'], $allowedCategories)) {
             continue;
         }
 
@@ -194,6 +194,9 @@ function importCSVFiles()
                 "path" => [
                     [
                         "lv" => $productInfo['Item category']
+                    ],
+                    [
+                        "lv" => $productInfo['Subcategory']
                     ]
                 ]
             ],
@@ -212,13 +215,18 @@ function importCSVFiles()
 
         foreach ($formattedData['Products.csv'] as $productPrice) {
             if ($productPrice['INF_PREK'] == $productInfo['INF_PREK']) {
-                $product['price'] = (float)$productPrice['Kaina'] + ($productPrice['Kaina'] * 0.3);
+                if (str_contains($productInfo['title'], 'ILLY')) { 
+                    $product['price'] = (float)$productPrice['Kaina'] + 2;
+                } else {
+                    $product['price'] = (float)$productPrice['Kaina'] + 5;
+                }
+
                 $product['sale_price'] = (float)$productPrice['LMKaina'] + ($productPrice['Kaina'] * 0.3);
                 break;
             }
         }
 
-        
+
         foreach ($formattedData['Stock.csv'] as $productStock) {
             if ($productStock['INF_PREK'] == $productInfo['INF_PREK']) {
                 $product['stock'] = (int)$productStock['PC1'];
