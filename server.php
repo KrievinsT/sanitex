@@ -203,7 +203,7 @@ function importCSVFiles()
             "sale_price" => null,
             "stock" => null,
             "sku" => $productInfo['INF_PREK'],
-            "visible" => "FALSE",
+            "visible" => "true",
             "featured" => "FALSE",
             "vendor" => $productInfo['Brand'],
             "pictures" => [] // Initially empty
