@@ -193,7 +193,7 @@ function importCSVFiles()
             "category" => [
                 "path" => [
                     [
-                        "lv" => $productInfo['Item category']
+                        "lv" => $productInfo['Subcategory']
                     ]
                 ]
             ],
@@ -203,7 +203,7 @@ function importCSVFiles()
             "sale_price" => null,
             "stock" => null,
             "sku" => $productInfo['INF_PREK'],
-            "visible" => "true",
+            "visible" => true,
             "featured" => "FALSE",
             "vendor" => $productInfo['Brand'],
             "pictures" => [] // Initially empty
