@@ -103,8 +103,8 @@ function importCSVFiles()
 
     $categoryMappings = [
         'Kafijas pupiņas' => [ 5.00, 'Kafijas pupiņas', false],
-        'Baltais Cukurs' =>  [ 0.6,  'Cukuri', true],
-        'Brūnais Cukurs' =>  [ 0.6,  'Cukuri', true]
+        'Baltais cukurs' =>  [ 0.6,  'Cukuri', true],
+        'Brūnais cukurs' =>  [ 0.6,  'Cukuri', true]
     ];
 
     // SKU or name => fixed markup in EUR
