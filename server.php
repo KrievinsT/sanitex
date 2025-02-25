@@ -103,6 +103,7 @@ function importCSVFiles()
 
     // CSV category => [markup value, API category, is percentage?]
 
+    // CSV category => [markup value, API category, is percentage?]
     $categoryMappings = [
         'Kafijas pupiņas' => [ 5.00, 'Kafijas pupiņas', false],
         'Baltais cukurs' =>  [ 0.6,  'Cukuri', true],
@@ -114,134 +115,138 @@ function importCSVFiles()
         'ILLY' => 2.00, 
     ];
 
-    foreach ($formattedData['ProductInfo.csv'] as $productInfo) {
-        
-        $csvCategory = $productInfo['Subcategory'];
-        $productSku = $productInfo['INF_PREK'];
-        $productName = $productInfo['Name'];
+    // Define chunk size (e.g., process 100 products at a time)
+    $batchSize = 100;
+    $productChunks = array_chunk($formattedData['ProductInfo.csv'], $batchSize); // Split data into chunks
 
-        
-        if (!isset($categoryMappings[$csvCategory])) {
-            continue; 
-        }
+    foreach ($productChunks as $batch) {
+        foreach ($batch as $productInfo) {
+            
+            $csvCategory = $productInfo['Subcategory'];
+            $productSku = $productInfo['INF_PREK'];
+            $productName = $productInfo['Name'];
 
-        
-        [$markupValue, $apiCategory, $isPercentage] = array_values($categoryMappings[$csvCategory]);
-
-        
-        $fixedMarkup = null;
-        foreach ($productFixedMarkups as $key => $amount) {
-            if (str_contains($productSku, $key) || str_contains($productName, $key)) {
-                $fixedMarkup = $amount;
-                break;
+            // Skip if category is not in mappings
+            if (!isset($categoryMappings[$csvCategory])) {
+                continue; 
             }
-        }
 
-        
-        $product = [
-            "handle" => $productSku,
-            "category" => [
-                "path" => [
-                    [
-                        "lv" => $apiCategory 
+            // Get category data
+            [$markupValue, $apiCategory, $isPercentage] = array_values($categoryMappings[$csvCategory]);
+
+            // Set up fixed markup (if any)
+            $fixedMarkup = null;
+            foreach ($productFixedMarkups as $key => $amount) {
+                if (str_contains($productSku, $key) || str_contains($productName, $key)) {
+                    $fixedMarkup = $amount;
+                    break;
+                }
+            }
+
+            // Create product
+            $product = [
+                "handle" => $productSku,
+                "category" => [
+                    "path" => [
+                        [
+                            "lv" => $apiCategory 
+                        ]
                     ]
-                ]
-            ],
-            "title" => $productName,
-            "description" => $productInfo['Description'],
-            "price" => null,
-            "sale_price" => null,
-            "stock" => null,
-            "sku" => $productSku,
-            "visible" => "FALSE",
-            "featured" => "FALSE",
-            "vendor" => $productInfo['Brand'],
-            "pictures" => [] // Initially empty
-        ];
+                ],
+                "title" => $productName,
+                "description" => $productInfo['Description'],
+                "price" => null,
+                "sale_price" => null,
+                "stock" => null,
+                "sku" => $productSku,
+                "visible" => "FALSE",
+                "featured" => "FALSE",
+                "vendor" => $productInfo['Brand'],
+                "pictures" => [] // Initially empty
+            ];
 
-        
-        foreach ($formattedData['Products.csv'] as $productPrice) {
-            if ($productPrice['INF_PREK'] == $productSku) {
-                $basePrice = (float)$productPrice['Kaina'];
-                $discountedPrice = (float)$productPrice['LMKaina'];
+            // Get prices and apply markup logic
+            foreach ($formattedData['Products.csv'] as $productPrice) {
+                if ($productPrice['INF_PREK'] == $productSku) {
+                    $basePrice = (float)$productPrice['Kaina'];
+                    $discountedPrice = (float)$productPrice['LMKaina'];
 
-                if ($fixedMarkup !== null) {
-                    // Product-specific fixed markup
-                    $product['price'] = $basePrice + $fixedMarkup;
-                    $product['sale_price'] = $discountedPrice + $fixedMarkup;
-                } elseif ($isPercentage) {
-                    // Category-based percentage markup
-                    $product['price'] = $basePrice + ($basePrice * $markupValue);
-                    $product['sale_price'] = $discountedPrice + ($basePrice * $markupValue);
+                    if ($fixedMarkup !== null) {
+                        // Product-specific fixed markup
+                        $product['price'] = $basePrice + $fixedMarkup;
+                        $product['sale_price'] = $discountedPrice + $fixedMarkup;
+                    } elseif ($isPercentage) {
+                        // Category-based percentage markup
+                        $product['price'] = $basePrice + ($basePrice * $markupValue);
+                        $product['sale_price'] = $discountedPrice + ($basePrice * $markupValue);
+                    } else {
+                        // Category-based fixed markup
+                        $product['price'] = $basePrice + $markupValue;
+                        $product['sale_price'] = $discountedPrice + $markupValue;
+                    }
+                    break;
+                }
+            }
+
+            // Get stock data
+            foreach ($formattedData['Stock.csv'] as $productStock) {
+                if ($productStock['INF_PREK'] == $productSku) {
+                    $product['stock'] = (int)$productStock['PC1'];
+                    break;
+                }
+            }
+
+            // Check if the product exists and update it if necessary
+            $productHandle = $product['handle'];
+            if ($existingProductData = checkProductExists($productHandle)) {
+                echo "Product with handle '" . $productHandle . "' already exists. Updating product from CSV.\n";
+                $updateResult = updateProduct($productHandle, $product);
+                if ($updateResult['status'] == 'success') {
+                    error_log("Product with handle '" . $productHandle . "' already exists");
+                    echo "Product with handle '" . $productHandle . "' successfully updated from CSV.\n";
                 } else {
-                    // Category-based fixed markup
-                    $product['price'] = $basePrice + $markupValue;
-                    $product['sale_price'] = $discountedPrice + $markupValue;
+                    echo "Failed to update product with handle '" . $productHandle . "'. Error: " . $updateResult['message'] . "\n";
+                    continue;
                 }
-                break;
-            }
-        }
-
-        
-        foreach ($formattedData['Stock.csv'] as $productStock) {
-            if ($productStock['INF_PREK'] == $productSku) {
-                $product['stock'] = (int)$productStock['PC1'];
-                break;
-            }
-        }
-        
-
-        $productHandle = $product['handle'];
-        if ($existingProductData = checkProductExists($productHandle)) {
-            echo "Product with handle '" . $productHandle . "' already exists. Updating product from CSV.\n";
-            $updateResult = updateProduct($productHandle, $product);
-            if ($updateResult['status'] == 'success') {
-                error_log("Product with handle '" . $productHandle . "' already exists");
-                echo "Product with handle '" . $productHandle . "' successfully updated from CSV.\n";
             } else {
-                echo "Failed to update product with handle '" . $productHandle . "' from CSV. Error: " . $updateResult['message'] . "\n";
-                continue;
-            }
-        } else {
-            // Step 2: Create the product in Mozello
-            $ch = curl_init($config['mozello_api_url']);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Authorization: ApiKey ' . $config['mozello_api_secret']
-            ]);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(["product" => $product]));
+                // Step 2: Create the product in Mozello
+                $ch = curl_init($config['mozello_api_url']);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Content-Type: application/json',
+                    'Authorization: ApiKey ' . $config['mozello_api_secret']
+                ]);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(["product" => $product]));
 
-            $response = curl_exec($ch);
-            curl_close($ch);
+                $response = curl_exec($ch);
+                curl_close($ch);
 
-            $responseData = json_decode($response, true);
+                $responseData = json_decode($response, true);
 
-            // Corrected check to look for "error": false for success
-            if (isset($responseData['error']) && $responseData['error'] === false) {
-                // Step 3: Upload and associate the image with the created product
-                $imageUrl = $productInfo["Photo_URL"];
-                if (empty($imageUrl) || filter_var($imageUrl, FILTER_VALIDATE_URL) === false) {
-                    continue; // Skip this product if the image URL is invalid
+                if (isset($responseData['error']) && $responseData['error'] === false) {
+                    // Step 3: Upload and associate the image with the created product
+                    $imageUrl = $productInfo["Photo_URL"];
+                    if (empty($imageUrl) || filter_var($imageUrl, FILTER_VALIDATE_URL) === false) {
+                        continue; // Skip this product if the image URL is invalid
+                    }
+
+                    // Fetch the image data
+                    $imageData = file_get_contents($imageUrl);
+                    $base64Image = base64_encode($imageData);
+
+                    // Step 4: Upload the image and associate it with the product
+                    uploadImageToMozello($product['handle'], $base64Image);
+                } else {
+                    echo "Failed to create product with handle '" . $productHandle . "'. API response indicates error. Skipping image upload.\n";
+                    continue; // Skip image upload for this product
                 }
-
-                // Fetch the image data
-                $imageData = file_get_contents($imageUrl);
-                $base64Image = base64_encode($imageData);
-
-                // Step 4: Upload the image and associate it with the product
-                uploadImageToMozello($product['handle'], $base64Image);
-            } else {
-                echo "Failed to create product with handle '" . $productHandle . "'. API response indicates error. Skipping image upload.\n";
-                continue; // Skip image upload for this product
             }
         }
-
-
     }
 
     return ["status" => "success", "message" => "Products processed successfully."];
+    
 }
 
 function uploadImageToMozello($productHandle, $base64Image)
