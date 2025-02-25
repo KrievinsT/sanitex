@@ -99,94 +99,93 @@ function importCSVFiles()
         }
     }
 
-    // Process products
+    // CSV category => [markup value, API category, is percentage?]
+    
+    $categoryMappings = [
+        'Kafijas pupiņas' => [5.00, 'Kafijas pupiņas', false]
+    ];
+
+    // SKU or name => fixed markup in EUR
+    $productFixedMarkups = [
+        'ILLY' => 2.00, 
+    ];
+
     foreach ($formattedData['ProductInfo.csv'] as $productInfo) {
+        
+        $csvCategory = $productInfo['Subcategory'];
+        $productSku = $productInfo['INF_PREK'];
+        $productName = $productInfo['Name'];
 
-        // CSV category => [markup value, API category, is percentage?]
-        $categoryMappings = [
-            'Kafijas pupiņas' => [5.00, 'Kafijas pupiņas', false]
-        ];
+        
+        if (!isset($categoryMappings[$csvCategory])) {
+            continue; 
+        }
 
-        // SKU or name => fixed markup in EUR
-        $productFixedMarkups = [
-            'ILLY' => 2.00, 
-        ];
+        
+        [$markupValue, $apiCategory, $isPercentage] = array_values($categoryMappings[$csvCategory]);
 
-        foreach ($formattedData['ProductInfo.csv'] as $productInfo) {
-            $csvCategory = $productInfo['Subcategory'];
-            $productSku = $productInfo['INF_PREK'];
-            $productName = $productInfo['Name'];
-
-            
-            if (!isset($categoryMappings[$csvCategory])) {
-                continue; 
-            }
-
-            
-            [$markupValue, $apiCategory, $isPercentage] = array_values($categoryMappings[$csvCategory]);
-
-            
-            $fixedMarkup = null;
-            foreach ($productFixedMarkups as $key => $amount) {
-                if (str_contains($productSku, $key) || str_contains($productName, $key)) {
-                    $fixedMarkup = $amount;
-                    break;
-                }
-            }
-
-            
-            $product = [
-                "handle" => $productSku,
-                "category" => [
-                    "path" => [
-                        [
-                            "lv" => $apiCategory 
-                        ]
-                    ]
-                ],
-                "title" => $productName,
-                "description" => $productInfo['Description'],
-                "price" => null,
-                "sale_price" => null,
-                "stock" => null,
-                "sku" => $productSku,
-                "visible" => "FALSE",
-                "featured" => "FALSE",
-                "vendor" => $productInfo['Brand'],
-                "pictures" => [] // Initially empty
-            ];
-
-            
-            foreach ($formattedData['Products.csv'] as $productPrice) {
-                if ($productPrice['INF_PREK'] == $productSku) {
-                    $basePrice = (float)$productPrice['Kaina'];
-                    $discountedPrice = (float)$productPrice['LMKaina'];
-
-                    if ($fixedMarkup !== null) {
-                        // Product-specific fixed markup
-                        $product['price'] = $basePrice + $fixedMarkup;
-                        $product['sale_price'] = $discountedPrice + $fixedMarkup;
-                    } elseif ($isPercentage) {
-                        // Category-based percentage markup
-                        $product['price'] = $basePrice + ($basePrice * $markupValue);
-                        $product['sale_price'] = $discountedPrice + ($basePrice * $markupValue);
-                    } else {
-                        // Category-based fixed markup
-                        $product['price'] = $basePrice + $markupValue;
-                        $product['sale_price'] = $discountedPrice + $markupValue;
-                    }
-                    break;
-                }
-            }
-
-            
-            foreach ($formattedData['Stock.csv'] as $productStock) {
-                if ($productStock['INF_PREK'] == $productSku) {
-                    $product['stock'] = (int)$productStock['PC1'];
-                    break;
-                }
+        
+        $fixedMarkup = null;
+        foreach ($productFixedMarkups as $key => $amount) {
+            if (str_contains($productSku, $key) || str_contains($productName, $key)) {
+                $fixedMarkup = $amount;
+                break;
             }
         }
+
+        
+        $product = [
+            "handle" => $productSku,
+            "category" => [
+                "path" => [
+                    [
+                        "lv" => $apiCategory 
+                    ]
+                ]
+            ],
+            "title" => $productName,
+            "description" => $productInfo['Description'],
+            "price" => null,
+            "sale_price" => null,
+            "stock" => null,
+            "sku" => $productSku,
+            "visible" => "FALSE",
+            "featured" => "FALSE",
+            "vendor" => $productInfo['Brand'],
+            "pictures" => [] // Initially empty
+        ];
+
+        
+        foreach ($formattedData['Products.csv'] as $productPrice) {
+            if ($productPrice['INF_PREK'] == $productSku) {
+                $basePrice = (float)$productPrice['Kaina'];
+                $discountedPrice = (float)$productPrice['LMKaina'];
+
+                if ($fixedMarkup !== null) {
+                    // Product-specific fixed markup
+                    $product['price'] = $basePrice + $fixedMarkup;
+                    $product['sale_price'] = $discountedPrice + $fixedMarkup;
+                } elseif ($isPercentage) {
+                    // Category-based percentage markup
+                    $product['price'] = $basePrice + ($basePrice * $markupValue);
+                    $product['sale_price'] = $discountedPrice + ($basePrice * $markupValue);
+                } else {
+                    // Category-based fixed markup
+                    $product['price'] = $basePrice + $markupValue;
+                    $product['sale_price'] = $discountedPrice + $markupValue;
+                }
+                break;
+            }
+        }
+
+        
+        foreach ($formattedData['Stock.csv'] as $productStock) {
+            if ($productStock['INF_PREK'] == $productSku) {
+                $product['stock'] = (int)$productStock['PC1'];
+                break;
+            }
+        }
+        
 
         $productHandle = $product['handle'];
         if ($existingProductData = checkProductExists($productHandle)) {
