@@ -213,12 +213,12 @@ function importCSVFiles()
         foreach ($formattedData['Products.csv'] as $productPrice) {
             if ($productPrice['INF_PREK'] == $productInfo['INF_PREK']) {
                 if (str_contains($productInfo['title'], 'ILLY')) { 
-                    $product['price'] = (float)$productPrice['Kaina'] + 2;
+                    $product['price'] = ((float)$productPrice['Kaina'] + 2) * 1.21; // Add VAT
                 } else {
-                    $product['price'] = (float)$productPrice['Kaina'] + 5;
+                    $product['price'] = ((float)$productPrice['Kaina'] + 5) * 1.21; // Add VAT
                 }
-
-                $product['sale_price'] = (float)$productPrice['LMKaina'] + ($productPrice['Kaina'] * 0.3);
+        
+                $product['sale_price'] = ((float)$productPrice['LMKaina'] + ($productPrice['Kaina'] * 0.3)) * 1.21; // Add VAT
                 break;
             }
         }
