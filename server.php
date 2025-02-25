@@ -3,6 +3,8 @@ require 'config.php';
 
 $config = require 'config.php';
 
+ini_set('max_execution_time', 3600);
+
 if (isset($_GET['action'])) {
     if ($_GET['action'] == 'importCSV') {
         echo json_encode(importCSVFiles());
