@@ -100,9 +100,11 @@ function importCSVFiles()
     }
 
     // CSV category => [markup value, API category, is percentage?]
-    
+
     $categoryMappings = [
-        'Kafijas pupiņas' => [5.00, 'Kafijas pupiņas', false]
+        'Kafijas pupiņas' => [ 5.00, 'Kafijas pupiņas', false],
+        'Baltais Cukurs' =>  [ 0.6,  'Cukuri', true],
+        'Brūnais Cukurs' =>  [ 0.6,  'Cukuri', true]
     ];
 
     // SKU or name => fixed markup in EUR
