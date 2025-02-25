@@ -61,85 +61,6 @@ function updateProduct($productHandle, $productData)
     }
 }
 
-// Insert a single product for testing
-function insertSingleProduct()
-{
-    global $config;
-
-    // Hardcoded product data
-    $product = [
-        "handle" => "hardcoded-product-123",
-        "category" => [
-            "path" => [
-                [
-                    "lv" => "Profesionālā maltā kafija"
-                ]
-            ]
-        ],
-        "title" => "Hardcoded Product",
-        "description" => "This is a hardcoded product for testing.",
-        "price" => 19.99,
-        "sale_price" => 15.99,
-        "stock" => 50,
-        "sku" => "HARDCODED123",
-        "visible" => "FALSE",
-        "featured" => "FALSE",
-        "vendor" => "TestVendor",
-        "pictures" => [] 
-    ];
-
-    $productHandle = $product['handle'];
-    if ($existingProductData = checkProductExists($productHandle)) {
-        echo "Product with handle '" . $productHandle . "' already exists. Updating product data.\n";
-        $updateResult = updateProduct($productHandle, $product);
-        if ($updateResult['status'] == 'success') {
-            return ["status" => "success", "message" => "Product with handle '" . $productHandle . "' successfully updated.", "response" => $updateResult['response']];
-        } else {
-            return $updateResult; 
-        }
-    } else {
-        $imageUrl = "https://epromo.imgix.net/image/209fcebf-c363-480f-a3be-897ba971323e.jpg";
-
-        $imageData = file_get_contents($imageUrl);
-        if ($imageData === false) {
-            return ["status" => "error", "message" => "Nevarēja nolasīt bildi no URL: $imageUrl"];
-        }
-
-        $base64Image = base64_encode($imageData);
-
-        $ch = curl_init($config['mozello_api_url']);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Authorization: ApiKey ' . $config['mozello_api_secret']
-        ]);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(["product" => $product]));
-
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        $uploadResponse = uploadImageToMozello($productHandle, $base64Image);
-
-        if (isset($uploadResponse['uid'])) {
-            $product['pictures'][] = [
-                "uid" => $uploadResponse['uid'],
-                "url" => $uploadResponse['url']
-            ];
-            print_r("Image uploaded successfully! UID: " . $uploadResponse['uid'] . ", URL: " . $uploadResponse['url'] . "\n");
-        } else {
-            return ["status" => "error", "message" => "Nevarēja augšupielādēt bildi uz Mozello", "response" => $uploadResponse];
-        }
-
-        
-        $responseData = json_decode($response, true);
-        if (isset($responseData['id'])) {
-            return ["status" => "success", "message" => "Produkts veiksmīgi izveidots", "response" => $responseData];
-        } else {
-            return ["status" => "error", "message" => "Nevarēja izveidot produktu", "response" => $responseData];
-        }
-    }
-}
 
 function importCSVFiles()
 {
@@ -202,12 +123,12 @@ function importCSVFiles()
             }
 
             
-            list($markupValue, $apiCategory, $isPercentage) = $categoryMappings[$csvCategory];
+            [$markupValue, $apiCategory, $isPercentage] = array_values($categoryMappings[$csvCategory]);
 
             
             $fixedMarkup = null;
             foreach ($productFixedMarkups as $key => $amount) {
-                if (stripos($productSku, $key) !== false || stripos($productName, $key) !== false) {
+                if (str_contains($productSku, $key) || str_contains($productName, $key)) {
                     $fixedMarkup = $amount;
                     break;
                 }
