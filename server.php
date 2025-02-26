@@ -208,15 +208,15 @@ function importCSVFiles()
                     if ($fixedMarkup !== null) {
                         // Product-specific fixed markup
                         $product['price'] = $basePrice + $fixedMarkup;
-                        $product['sale_price'] = $discountedPrice + $fixedMarkup;
+                        $product['Sale Price'] = $discountedPrice + $fixedMarkup;
                     } elseif ($isPercentage) {
                         // Category-based percentage markup
                         $product['price'] = $basePrice + ($basePrice * $markupValue);
-                        $product['sale_price'] = $discountedPrice + ($basePrice * $markupValue);
+                        $product['Sale Price'] = $discountedPrice + ($basePrice * $markupValue);
                     } else {
                         // Category-based fixed markup
                         $product['price'] = $basePrice + $markupValue;
-                        $product['sale_price'] = $discountedPrice + $markupValue;
+                        $product['Sale Price'] = $discountedPrice + $markupValue;
                     }
                     break;
                 }
