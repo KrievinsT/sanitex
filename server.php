@@ -101,14 +101,19 @@ function importCSVFiles()
         }
     }
 
-    // CSV category => [markup value, API category, is percentage?, keywords (optional), use Subcategory (true) or Item Category (false)]
+    // CSV category => [markup value| API category | is percentage? |  keywords (optional) | use Subcategory (true) or Item Category (false)]
     $categoryMappings = [
         'Kafijas pupiņas' => [5.00, 'Kafijas pupiņas', false, [], true], 
         'Baltais cukurs' => [0.6, 'Cukuri', true, [], true], 
         'Brūnais cukurs' => [0.6, 'Cukuri', true, ['demerara', 'muskovado'], true], 
-        'Piena produkti un olas' => [0.6, 'Piens', true, ['dzēriens'], false], 
+        'Veģetāriešiem, vegāniem' => [0.6, 'Piena produkti', true, ['dzēriens'], true], 
         'Saldais krējums' => [0.6, 'Piens', true, ['Kafijas krējums'], true], 
         'Ilgtermiņa piens (UHT)' => [0.6, 'Piens', true, ['Piens'], true], 
+        'Maltās kafijas' => [0.5, 'Profesionālā maltā kafija', true, [], true],
+        'Šķīstošā kafija' => [0.5, 'Šķīstošā kafija', true, [], true],
+        'Kapučīno' => [0.5, 'Šķīstošā kafija', true, ['Jacobs Latte', 'Jacobs 2in1', 'Jacobs 3IN1', 'NESCAFE Classic 3 in 1', 'MOKATE 3in1 Latte', 'NESCAFE Strong 3 in 1,'], true],
+        'Beramās tējas' => [0.7, 'Tējas beramās', true, [], true],
+        'Tējas maisiņos' => [0.7, 'Tējas Loyd', true, [], true],
     ];
 
     // SKU or name => fixed markup in EUR
