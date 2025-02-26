@@ -13,13 +13,10 @@ ini_set('max_execution_time', 6300);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSV Import Tool</title>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
 </head>
 <body>
     <h2>Product Import Tool</h2>
-    
     <button onclick="importProducts()">Import Products from CSV</button>
-    
     <script src="script.js"></script>
     <script src="index.js"></script>
 </body>

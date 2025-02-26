@@ -101,18 +101,19 @@ function importCSVFiles()
         }
     }
 
-    // CSV category => [markup value, API category, is percentage?]
-
-    // CSV category => [markup value, API category, is percentage?]
+    // CSV category => [markup value, API category, is percentage?, keywords (optional), use Subcategory (true) or Item Category (false)]
     $categoryMappings = [
-        'Kafijas pupiņas' => [ 5.00, 'Kafijas pupiņas', false],
-        'Baltais cukurs' =>  [ 0.6,  'Cukuri', true],
-        'Brūnais cukurs' =>  [ 0.6,  'Cukuri', true]
+        'Kafijas pupiņas' => [5.00, 'Kafijas pupiņas', false, [], true], 
+        'Baltais cukurs' => [0.6, 'Cukuri', true, [], true], 
+        'Brūnais cukurs' => [0.6, 'Cukuri', true, ['demerara', 'muskovado'], true], 
+        'Piena produkti un olas' => [0.6, 'Piens', true, ['dzēriens'], false], 
+        'Saldais krējums' => [0.6, 'Piens', true, ['Kafijas krējums'], true], 
+        'Ilgtermiņa piens (UHT)' => [0.6, 'Piens', true, ['Piens'], true], 
     ];
 
     // SKU or name => fixed markup in EUR
     $productFixedMarkups = [
-        'ILLY' => 2.00, 
+        'ILLY' => 2.00,
     ];
 
     // Define chunk size (e.g., process 100 products at a time)
@@ -122,17 +123,44 @@ function importCSVFiles()
     foreach ($productChunks as $batch) {
         foreach ($batch as $productInfo) {
             
-            $csvCategory = $productInfo['Subcategory'];
+            $csvSubcategory = $productInfo['Subcategory'];   // Subcategory
+            $csvMainCategory = $productInfo['Item Category']; // Main category
             $productSku = $productInfo['INF_PREK'];
             $productName = $productInfo['Name'];
 
-            // Skip if category is not in mappings
-            if (!isset($categoryMappings[$csvCategory])) {
-                continue; 
+            // Try to match category using both Subcategory and Main Category
+            $matchedCategory = null;
+            foreach ($categoryMappings as $csvCategory => $categoryData) {
+                [$markupValue, $apiCategory, $isPercentage, $keywords, $useSubcategory] = array_values($categoryData + [null, null, null, [], true]);
+
+                $categoryMatch = $useSubcategory ? $csvSubcategory : $csvMainCategory;
+
+                if ($categoryMatch === $csvCategory) {
+                    $matchedCategory = [$markupValue, $apiCategory, $isPercentage, $keywords];
+                    break;
+                }
             }
 
-            // Get category data
-            [$markupValue, $apiCategory, $isPercentage] = array_values($categoryMappings[$csvCategory]);
+            // Skip if no category match
+            if (!$matchedCategory) {
+                continue;
+            }
+
+            [$markupValue, $apiCategory, $isPercentage, $keywords] = $matchedCategory;
+
+            // If keywords are defined, check if the product name contains any keyword
+            if (!empty($keywords)) {
+                $matched = false;
+                foreach ($keywords as $keyword) {
+                    if (stripos($productName, $keyword) !== false) {
+                        $matched = true;
+                        break;
+                    }
+                }
+                if (!$matched) {
+                    continue; // Skip product if it does not match any keyword
+                }
+            }
 
             // Set up fixed markup (if any)
             $fixedMarkup = null;
@@ -149,7 +177,7 @@ function importCSVFiles()
                 "category" => [
                     "path" => [
                         [
-                            "lv" => $apiCategory 
+                            "lv" => $apiCategory
                         ]
                     ]
                 ],
@@ -159,7 +187,7 @@ function importCSVFiles()
                 "sale_price" => null,
                 "stock" => null,
                 "sku" => $productSku,
-                "visible" => "FALSE",
+                "visible" => true,
                 "featured" => "FALSE",
                 "vendor" => $productInfo['Brand'],
                 "pictures" => [] // Initially empty
@@ -195,6 +223,8 @@ function importCSVFiles()
                     break;
                 }
             }
+    
+
 
             // Check if the product exists and update it if necessary
             $productHandle = $product['handle'];
