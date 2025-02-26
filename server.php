@@ -113,6 +113,7 @@ function importCSVFiles()
         'Šķīstošā kafija' => [0.5, 'Šķīstošā kafija', true, [], true],
         'Kapučīno' => [0.5, 'Šķīstošā kafija', true, ['Jacobs Latte', 'Jacobs 2in1', 'Jacobs 3IN1', 'NESCAFE Classic 3 in 1', 'MOKATE 3in1 Latte', 'NESCAFE Strong 3 in 1,'], true],
         'Beramās tējas' => [0.7, 'Tējas beramās', true, [], true],
+        'Kafijas kapsulas' => [0.5, 'Kafijas kapsulas', true, [], false],
         'Tējas maisiņos' => [0.7, 'Tējas Loyd', true, [], true],
     ];
 
