@@ -219,7 +219,7 @@ function importCSVFiles()
                         if ($fixedMarkup !== null) {
                             $product['sale_price'] = $sale + $fixedMarkup;
                         } elseif ($isPercentage) {
-                            $product['sale_price'] = $sale + ($basePrice * $markupValue);
+                            $product['sale_price'] = $sale + ($sale * $markupValue);
                         } else {
                             $product['sale_price'] = $sale + $markupValue;
                         }
