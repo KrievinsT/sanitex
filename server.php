@@ -224,7 +224,7 @@ function importCSVFiles()
                             $product['sale_price'] = $sale + $markupValue;
                         }
                     } else {
-                        $product['sale_price'] = null;
+                        $product['sale_price'] = $basePrice;
                     }
                 }
             }
