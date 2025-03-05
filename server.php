@@ -211,10 +211,11 @@ function importCSVFiles()
                 }
             }
 
+            $basePrice = $product['price'];
+
             foreach ($formattedData['Sales.csv'] as $saleprice) {
                 if ($saleprice['INF_PREK'] == $productSku) {
                     $sale = $saleprice['PROMO_PRICE_PVM'];
-                    $basePrice = $product['price'];
                     if ($sale) {
                         if ($fixedMarkup !== null) {
                             $product['sale_price'] = $sale + $fixedMarkup;
@@ -223,9 +224,9 @@ function importCSVFiles()
                         } else {
                             $product['sale_price'] = $sale + $markupValue;
                         }
-                    } else {
-                        $product['sale_price'] = $basePrice;
                     }
+                } else {
+                    $product['sale_price'] = $basePrice;
                 }
             }
 
