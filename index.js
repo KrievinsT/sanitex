@@ -41,13 +41,12 @@ fs.readdir(uploadsFolder, (err, files) => {
 
 async function downloadLatestFiles(sftp) {
 
-  
-
   const remoteDir = '/'; 
   const filePatterns = {
     productInfo: /MKANDERSONS_ProductInfo_\d{4}-\d{2}-\d{2}\.csv/,
     products: /MKANDERSONS_Products_\d{4}-\d{2}-\d{2}\.csv/,
-    stock: /MKANDERSONS_Stock_\d{4}-\d{2}-\d{2}_\d{4}\.csv/
+    stock: /MKANDERSONS_Stock_\d{4}-\d{2}-\d{2}_\d{4}\.csv/,
+    sales: /MKANDERSONS_Sales_\d{4}-\d{2}-\d{2}\.csv/ // Added Sales file pattern
   };
 
   // List all files in the remote directory
@@ -57,10 +56,11 @@ async function downloadLatestFiles(sftp) {
   const latestFiles = {
     productInfo: findLatestFile(files, filePatterns.productInfo),
     products: findLatestFile(files, filePatterns.products),
-    stock: findLatestFile(files, filePatterns.stock)
+    stock: findLatestFile(files, filePatterns.stock),
+    sales: findLatestFile(files, filePatterns.sales) // Find latest sales file
   };
 
-  if (!latestFiles.productInfo || !latestFiles.products || !latestFiles.stock) {
+  if (!latestFiles.productInfo || !latestFiles.products || !latestFiles.stock || !latestFiles.sales) {
     throw new Error("One or more required CSV files are missing from the SFTP server.");
   }
 
@@ -68,10 +68,11 @@ async function downloadLatestFiles(sftp) {
   await sftp.get(`${remoteDir}/${latestFiles.productInfo.name}`, 'uploads/ProductInfo.csv');
   await sftp.get(`${remoteDir}/${latestFiles.products.name}`, 'uploads/Products.csv');
   await sftp.get(`${remoteDir}/${latestFiles.stock.name}`, 'uploads/Stock.csv');
-  await sftp.get(`${remoteDir}/${latestFiles.stock.name}`, 'uploads/Sales.csv');
+  await sftp.get(`${remoteDir}/${latestFiles.sales.name}`, 'uploads/Sales.csv'); // Corrected Sales file download
 
   console.log('Latest files downloaded successfully');
 }
+
 
 function findLatestFile(files, pattern) {
   const matchingFiles = files.filter(file => pattern.test(file.name));
