@@ -3,7 +3,7 @@
     flush();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['download'])) {
-        $filePath = 'uploads/Sales.csv'; // Path to the file
+        $filePath = 'uploads/Products.csv'; // Path to the file
     
         if (!file_exists($filePath)) {
             die("Error: The file does not exist.");
