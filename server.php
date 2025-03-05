@@ -211,12 +211,12 @@ function importCSVFiles()
                 }
             }
 
-            foreach ($formattedData['Sales.csv'] as $saleprice) {
-                if ($saleprice['INF_PREK'] == $productSku) {
-                    $sale = $saleprice['PC1'];
-                    $product['sale_price'] = $product['price'] - $sale;
-                }
-            }
+            // foreach ($formattedData['Sales.csv'] as $saleprice) {
+            //     if ($saleprice['INF_PREK'] == $productSku) {
+            //         $sale = $saleprice['PC1'];
+            //         $product['sale_price'] = $product['price'] - $sale;
+            //     }
+            // }
 
             // Get stock data
             foreach ($formattedData['Stock.csv'] as $productStock) {
