@@ -73,7 +73,7 @@ function importCSVFiles()
     if (!is_dir($localFolder))
         mkdir($localFolder, 0777, true);
 
-    $csvFiles = ["ProductInfo.csv", "Products.csv", "Stock.csv"];
+    $csvFiles = ["ProductInfo.csv", "Products.csv", "Stock.csv", "Sales.csv"];
     $formattedData = [];
 
     
@@ -196,27 +196,37 @@ function importCSVFiles()
             ];
 
             // Get prices and apply markup logic
-            foreach ($formattedData['Products.csv'] as $productPrice) {
-                if ($productPrice['INF_PREK'] == $productSku) {
-                    $basePrice = (float)$productPrice['Kaina'];
-                    $discountedPrice = (float)$productPrice['LMKaina'];
+    
+            $basePrice = (float)$productInfo['Sale price'];
+
+            if ($fixedMarkup !== null) {
+                // Product-specific fixed markup
+                $product['price'] = $basePrice + $fixedMarkup;
+            } elseif ($isPercentage) {
+                // Category-based percentage markup
+                $product['price'] = $basePrice + ($basePrice * $markupValue);
+            } else {
+                // Category-based fixed markup
+                $product['price'] = $basePrice + $markupValue;
+            }
+
+
+                    
+            foreach ($formattedData['Sales.csv'] as $saleprice) {
+                if ($saleprice['INF_PREK'] == $productSku) {
+
+                    $sale = $saleprice['PC1'];
 
                     if ($fixedMarkup !== null) {
-                        // Product-specific fixed markup
-                        $product['price'] = $basePrice + $fixedMarkup;
-                        $product['Sale Price'] = $discountedPrice + $fixedMarkup;
+                        $product['sale_price'] = $sale + $fixedMarkup;
                     } elseif ($isPercentage) {
-                        // Category-based percentage markup
-                        $product['price'] = $basePrice + ($basePrice * $markupValue);
-                        $product['Sale Price'] = $discountedPrice + ($basePrice * $markupValue);
+                        $product['sale_price'] = $sale + ($sale * $markupValue);
                     } else {
-                        // Category-based fixed markup
-                        $product['price'] = $basePrice + $markupValue;
-                        $product['Sale Price'] = $discountedPrice + $markupValue;
+                        $product['sale_price'] = $sale + $markupValue;
                     }
-                    break;
                 }
             }
+            
 
             // Get stock data
             foreach ($formattedData['Stock.csv'] as $productStock) {
