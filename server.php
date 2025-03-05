@@ -212,21 +212,20 @@ function importCSVFiles()
             }
 
             $basePrice = $product['price'];
+            $product['sale_price'] = $basePrice; 
 
             foreach ($formattedData['Sales.csv'] as $saleprice) {
-                if ($saleprice['INF_PREK'] == $productSku) {
-                    $sale = $saleprice['PROMO_PRICE_PVM'];
-                    if ($sale) {
-                        if ($fixedMarkup !== null) {
-                            $product['sale_price'] = $sale + $fixedMarkup;
-                        } elseif ($isPercentage) {
-                            $product['sale_price'] = $sale + ($sale * $markupValue);
-                        } else {
-                            $product['sale_price'] = $sale + $markupValue;
-                        }
+                if ($saleprice['INF_PREK'] == $productSku && !empty($saleprice['PROMO_PRICE_PVM'])) {
+                    $sale = (float)$saleprice['PROMO_PRICE_PVM'];
+
+                    if ($fixedMarkup !== null) {
+                        $product['sale_price'] = $sale + $fixedMarkup;
+                    } elseif ($isPercentage) {
+                        $product['sale_price'] = $sale * (1 + $markupValue);
+                    } else {
+                        $product['sale_price'] = $sale + $markupValue;
                     }
-                } else {
-                    $product['sale_price'] = $basePrice;
+                    break; 
                 }
             }
 
