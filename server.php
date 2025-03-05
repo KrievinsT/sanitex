@@ -189,7 +189,7 @@ function importCSVFiles()
                 "sale_price" => null,
                 "stock" => null,
                 "sku" => $productSku,
-                "visible" => true,
+                "visible" => false,
                 "featured" => "FALSE",
                 "vendor" => $productInfo['Brand'],
                 "pictures" => [] 
