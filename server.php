@@ -117,24 +117,23 @@ function importCSVFiles()
         'Tējas maisiņos' => [0.7, 'Tējas Loyd', true, [], true],
     ];
 
-    // SKU or name => fixed markup in EUR
+    
     $productFixedMarkups = [
         'ILLY' => 2.00,
     ];
 
-    // Define chunk size (e.g., process 100 products at a time)
+    
     $batchSize = 100;
-    $productChunks = array_chunk($formattedData['ProductInfo.csv'], $batchSize); // Split data into chunks
+    $productChunks = array_chunk($formattedData['ProductInfo.csv'], $batchSize); 
 
     foreach ($productChunks as $batch) {
         foreach ($batch as $productInfo) {
             
-            $csvSubcategory = $productInfo['Subcategory'];   // Subcategory
-            $csvMainCategory = $productInfo['Item Category']; // Main category
+            $csvSubcategory = $productInfo['Subcategory'];   
+            $csvMainCategory = $productInfo['Item Category']; 
             $productSku = $productInfo['INF_PREK'];
             $productName = $productInfo['Name'];
 
-            // Try to match category using both Subcategory and Main Category
             $matchedCategory = null;
             foreach ($categoryMappings as $csvCategory => $categoryData) {
                 [$markupValue, $apiCategory, $isPercentage, $keywords, $useSubcategory] = array_values($categoryData + [null, null, null, [], true]);
@@ -147,14 +146,13 @@ function importCSVFiles()
                 }
             }
 
-            // Skip if no category match
             if (!$matchedCategory) {
                 continue;
             }
 
             [$markupValue, $apiCategory, $isPercentage, $keywords] = $matchedCategory;
 
-            // If keywords are defined, check if the product name contains any keyword
+           
             if (!empty($keywords)) {
                 $matched = false;
                 foreach ($keywords as $keyword) {
@@ -164,11 +162,10 @@ function importCSVFiles()
                     }
                 }
                 if (!$matched) {
-                    continue; // Skip product if it does not match any keyword
+                    continue; 
                 }
             }
 
-            // Set up fixed markup (if any)
             $fixedMarkup = null;
             foreach ($productFixedMarkups as $key => $amount) {
                 if (str_contains($productSku, $key) || str_contains($productName, $key)) {
@@ -177,7 +174,6 @@ function importCSVFiles()
                 }
             }
 
-            // Create product
             $product = [
                 "handle" => $productSku,
                 "category" => [
@@ -196,7 +192,7 @@ function importCSVFiles()
                 "visible" => true,
                 "featured" => "FALSE",
                 "vendor" => $productInfo['Brand'],
-                "pictures" => [] // Initially empty
+                "pictures" => [] 
             ];
 
             // Get prices and apply markup logic
@@ -245,7 +241,7 @@ function importCSVFiles()
                     continue;
                 }
             } else {
-                // Step 2: Create the product in Mozello
+                //Create the product in Mozello
                 $ch = curl_init($config['mozello_api_url']);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POST, true);
@@ -271,11 +267,11 @@ function importCSVFiles()
                     $imageData = file_get_contents($imageUrl);
                     $base64Image = base64_encode($imageData);
 
-                    // Step 4: Upload the image and associate it with the product
+                    //Upload the image and associate it with the product
                     uploadImageToMozello($product['handle'], $base64Image);
                 } else {
                     echo "Failed to create product with handle '" . $productHandle . "'. API response indicates error. Skipping image upload.\n";
-                    continue; // Skip image upload for this product
+                    continue;
                 }
             }
         }
