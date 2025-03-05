@@ -1,7 +1,7 @@
 <?php
     ob_clean();
     flush();
-    
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['download'])) {
         $filePath = 'uploads/Sales.csv'; // Path to the file
     

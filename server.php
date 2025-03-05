@@ -195,38 +195,28 @@ function importCSVFiles()
                 "pictures" => [] 
             ];
 
-            // Get prices and apply markup logic
-    
-            $basePrice = (float)$productInfo['Sale price'];
-
-            if ($fixedMarkup !== null) {
-                // Product-specific fixed markup
-                $product['price'] = $basePrice + $fixedMarkup;
-            } elseif ($isPercentage) {
-                // Category-based percentage markup
-                $product['price'] = $basePrice + ($basePrice * $markupValue);
-            } else {
-                // Category-based fixed markup
-                $product['price'] = $basePrice + $markupValue;
-            }
-
-
-                    
-            foreach ($formattedData['Sales.csv'] as $saleprice) {
-                if ($saleprice['INF_PREK'] == $productSku) {
-
-                    $sale = $saleprice['PC1'];
+           
+            foreach ($formattedData['Products.csv'] as $productPrice) {
+                if ($productPrice['INF_PREK'] == $productSku) {
+                    $basePrice = (float)$productPrice['Kaina'];
 
                     if ($fixedMarkup !== null) {
-                        $product['sale_price'] = $sale + $fixedMarkup;
+                        $product['price'] = $basePrice + $fixedMarkup;
                     } elseif ($isPercentage) {
-                        $product['sale_price'] = $sale + ($sale * $markupValue);
+                        $product['price'] = $basePrice + ($basePrice * $markupValue);
                     } else {
-                        $product['sale_price'] = $sale + $markupValue;
+                        $product['price'] = $basePrice + $markupValue;
                     }
+                    break;
                 }
             }
-            
+
+            foreach ($formattedData['Sales.csv'] as $saleprice) {
+                if ($saleprice['INF_PREK'] == $productSku) {
+                    $sale = $saleprice['PC1'];
+                    $product['sale_price'] = $product['price'] - $sale;
+                }
+            }
 
             // Get stock data
             foreach ($formattedData['Stock.csv'] as $productStock) {
