@@ -211,12 +211,23 @@ function importCSVFiles()
                 }
             }
 
-            // foreach ($formattedData['Sales.csv'] as $saleprice) {
-            //     if ($saleprice['INF_PREK'] == $productSku) {
-            //         $sale = $saleprice['PC1'];
-            //         $product['sale_price'] = $product['price'] - $sale;
-            //     }
-            // }
+            foreach ($formattedData['Sales.csv'] as $saleprice) {
+                if ($saleprice['INF_PREK'] == $productSku) {
+                    $sale = $saleprice['PROMO_PRICE_PVM'];
+                    $basePrice = $product['price'];
+                    if ($sale) {
+                        if ($fixedMarkup !== null) {
+                            $product['sale_price'] = $sale + $fixedMarkup;
+                        } elseif ($isPercentage) {
+                            $product['sale_price'] = $sale + ($basePrice * $markupValue);
+                        } else {
+                            $product['sale_price'] = $sale + $markupValue;
+                        }
+                    } else {
+                        $product['sale_price'] = null;
+                    }
+                }
+            }
 
             // Get stock data
             foreach ($formattedData['Stock.csv'] as $productStock) {
