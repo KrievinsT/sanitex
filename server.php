@@ -111,7 +111,7 @@ function importCSVFiles()
         'Medus' => [0.6, 'Medus', true, [], true], 
         'Piena produkti un olas' => [0.6, 'Piena produkti', true, ['OATLY', 'DEARY', 'ALPRO', 'VITASI', 'MARGE', 'VALIO', 'BRIDGE'], false], 
         'Saldais krējums' => [0.6, 'Piens', true, ['Kafijas krējums'], true], 
-        'Šokolādes konfektes' => [0.4, 'Saldumi', true, [], true], 
+        'Šokolādes konfektes' => [0.4, 'Saldumi', true, ['MARGE', 'ROSHEN', 'PERGALE', 'LAIMA', 'Regina', 'PURE', 'Migle', ], true], 
         'Karameles' => [0.4, 'Saldumi', true, ['Gotiņa'], true], 
         'Sīrupi, biezsulas' => [0.6, 'Sīrupi', true, [], true], 
         'Ilgtermiņa piens (UHT)' => [0.6, 'Piens', true, ['Piens'], true], 
@@ -120,6 +120,7 @@ function importCSVFiles()
         'Kapučīno' => [0.5, 'Šķīstošā kafija', true, ['Jacobs Latte', 'Jacobs 2in1', 'Jacobs 3IN1', 'NESCAFE Classic 3 in 1', 'MOKATE 3in1 Latte', 'NESCAFE Strong 3 in 1,'], true],
         'Beramās tējas' => [0.7, 'Tējas beramās', true, [], true],
         'Tējas maisiņos' => [0.7, 'Tēja paciņās', true, [], true],
+        
     ];
 
     
