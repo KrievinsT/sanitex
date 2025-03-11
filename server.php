@@ -106,7 +106,7 @@ function importCSVFiles()
         'Kafijas pupiņas' => [5.00, 'Kafijas pupiņas', false, [], true], 
         'Baltais cukurs' => [0.6, 'Cukuri', true, [], true], 
         'Brūnais cukurs' => [0.6, 'Cukuri', true, ['DAN SUKKER', 'DIAMANT'], true],
-        'Kafijas kapsulas' => [0.5, 'Kafijas kapsulas', true, [], false],
+        'Kafijas kapsulas' => [0.5, 'TEST', true, [], false],
         'Kakao' => [0.5, 'Kakao', true, [], true],
         'Medus' => [0.6, 'Medus', true, [], true], 
         'Piena produkti un olas' => [0.6, 'Piena produkti', true, ['OATLY', 'DEARY', 'ALPRO', 'VITASI', 'MARGE', 'VALIO', 'BRIDGE'], false], 
