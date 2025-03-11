@@ -105,16 +105,21 @@ function importCSVFiles()
     $categoryMappings = [
         'Kafijas pupiņas' => [5.00, 'Kafijas pupiņas', false, [], true], 
         'Baltais cukurs' => [0.6, 'Cukuri', true, [], true], 
-        'Brūnais cukurs' => [0.6, 'Cukuri', true, ['demerara', 'muskovado'], true], 
-        'Veģetāriešiem, vegāniem' => [0.6, 'Piena produkti', true, ['dzēriens'], true], 
+        'Brūnais cukurs' => [0.6, 'Cukuri', true, ['DAN SUKKER', 'DIAMANT'], true],
+        'Kafijas kapsulas' => [0.5, 'Kafijas kapsulas', true, [], false],
+        'Kakao' => [0.5, 'Kakao', true, [], true],
+        'Medus' => [0.6, 'Medus', true, [], true], 
+        'Piena produkti un olas' => [0.6, 'Piena produkti', true, ['OATLY', 'DEARY', 'ALPRO', 'VITASI', 'MARGE', 'VALIO', 'BRIDGE'], false], 
         'Saldais krējums' => [0.6, 'Piens', true, ['Kafijas krējums'], true], 
+        'Šokolādes konfektes' => [0.4, 'Saldumi', true, [], true], 
+        'Karameles' => [0.4, 'Saldumi', true, ['Gotiņa'], true], 
+        'Sīrupi, biezsulas' => [0.6, 'Sīrupi', true, [], true], 
         'Ilgtermiņa piens (UHT)' => [0.6, 'Piens', true, ['Piens'], true], 
         'Maltās kafijas' => [0.5, 'Profesionālā maltā kafija', true, [], true],
         'Šķīstošā kafija' => [0.5, 'Šķīstošā kafija', true, [], true],
         'Kapučīno' => [0.5, 'Šķīstošā kafija', true, ['Jacobs Latte', 'Jacobs 2in1', 'Jacobs 3IN1', 'NESCAFE Classic 3 in 1', 'MOKATE 3in1 Latte', 'NESCAFE Strong 3 in 1,'], true],
         'Beramās tējas' => [0.7, 'Tējas beramās', true, [], true],
-        'Kafijas kapsulas' => [0.5, 'Kafijas kapsulas', true, [], false],
-        'Tējas maisiņos' => [0.7, 'Tējas Loyd', true, [], true],
+        'Tējas maisiņos' => [0.7, 'Tēja paciņās', true, [], true],
     ];
 
     
