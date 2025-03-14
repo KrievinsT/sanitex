@@ -164,9 +164,6 @@ function importCSVFiles() {
     $batchSize = 100;
     $productChunks = array_chunk($formattedData['ProductInfo.csv'], $batchSize); 
     
-    $allowedProductSkus = [
-        '12345', '67890', 'ABCDE', 'XYZ12' // Add all allowed INF_PREK values here
-    ];
     
     foreach ($productChunks as $batch) {
         foreach ($batch as $productInfo) {
@@ -175,7 +172,8 @@ function importCSVFiles() {
     
         // Check if the product SKU is in the allowed list
         if (!in_array($productSku, $allowedProductSkus)) {
-            continue; // Skip this product if it's not allowed
+            echo "Skipping SKU: " . $productSku . "\n";
+            continue; 
         }
     
         $csvSubcategory = $productInfo['Subcategory'];   
