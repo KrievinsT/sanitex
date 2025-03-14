@@ -64,8 +64,7 @@ function updateProduct($productHandle, $productData)
 }
 
 
-function importCSVFiles()
-{
+function importCSVFiles() {
     global $config;
     
 
@@ -165,12 +164,18 @@ function importCSVFiles()
     $batchSize = 100;
     $productChunks = array_chunk($formattedData['ProductInfo.csv'], $batchSize); 
     
-    foreach ($batch as $productInfo) {
+    $allowedProductSkus = [
+        '12345', '67890', 'ABCDE', 'XYZ12' // Add all allowed INF_PREK values here
+    ];
+    
+    foreach ($productChunks as $batch) {
+        foreach ($batch as $productInfo) {
 
         $productSku = $productInfo['INF_PREK']; 
     
+        // Check if the product SKU is in the allowed list
         if (!in_array($productSku, $allowedProductSkus)) {
-            continue;
+            continue; // Skip this product if it's not allowed
         }
     
         $csvSubcategory = $productInfo['Subcategory'];   
@@ -277,7 +282,7 @@ function importCSVFiles()
             }
         }
     
-
+    
 
             // Check if the product exists and update it if necessary
             $productHandle = $product['handle'];
@@ -325,6 +330,7 @@ function importCSVFiles()
                     continue;
                 }
             }
+    
         }
     }
 
