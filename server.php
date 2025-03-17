@@ -115,7 +115,7 @@ function importCSVFiles() {
         'Saldais krējums' => [0.6, 'Piens', true, ['Kafijas krējums'], true], 
         'Šokolādes konfektes' => [0.4, 'Saldumi', true, ['MARGE', 'ROSHEN', 'PERGALE', 'LAIMA', 'Regina', 'PURE', 'Migle', ], true], 
         'Karameles' => [0.4, 'Saldumi', true, ['Gotiņa'], true], 
-        'Dzērieni' => [0.6, 'Sīrupi', true, ['TEISSEIRE', 'sīrups', 'sīrupa'], false], 
+        'Dzērieni' => [0.6, 'Sīrupi', true, [], false], 
         'Ilgtermiņa piens (UHT)' => [0.6, 'Piens', true, ['Piens'], true], 
         'Maltās kafijas' => [0.5, 'Maltā kafija', true, [], true],
         'Šķīstošā kafija' => [0.5, 'Šķīstošā kafija', true, [], true],
