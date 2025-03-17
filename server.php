@@ -276,6 +276,8 @@ function importCSVFiles() {
                 break;
             }
         }
+
+        echo "M Kategorija => " . $apiCategory;
     
         $product = [
             "handle" => $productSku,
