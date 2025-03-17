@@ -236,10 +236,11 @@ function importCSVFiles() {
         }
     
         $csvSubcategory = $productInfo['Subcategory'];   
-        $csvMainCategory = $productInfo['Item Category']; 
+        $csvMainCategory = $productInfo['Item Category'];
         $productName = $productInfo['Name'];
     
         $matchedCategory = null;
+        
         foreach ($categoryMappings as $csvCategory => $categoryData) {
             [$markupValue, $apiCategory, $isPercentage, $keywords, $useSubcategory] = array_values($categoryData + [null, null, null, [], true]);
     
