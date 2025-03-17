@@ -43,7 +43,7 @@ function updateProduct($productHandle, $productData)
     global $config;
 
     $ch = curl_init("https://api.mozello.com/v1/store/product/" . $productHandle . "/");
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10000000);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -221,7 +221,7 @@ function importCSVFiles() {
     ];
 
     
-    $batchSize = 1000;
+    $batchSize = 200;
     $productChunks = array_chunk($formattedData['ProductInfo.csv'], $batchSize); 
     
     
@@ -358,7 +358,7 @@ function importCSVFiles() {
             } else {
                 //Create the product in Mozello
                 $ch = curl_init($config['mozello_api_url']);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10000000);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -412,7 +412,7 @@ function uploadImageToMozello($productHandle, $base64Image)
 
     $ch = curl_init("https://api.mozello.com/v1/store/product/$productHandle/picture/");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10000000);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
