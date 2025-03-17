@@ -220,7 +220,7 @@ function importCSVFiles() {
     ];
 
     
-    $batchSize = 100;
+    $batchSize = 400;
     $productChunks = array_chunk($formattedData['ProductInfo.csv'], $batchSize); 
     
     
